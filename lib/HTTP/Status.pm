@@ -277,12 +277,20 @@ then C<undef> is returned.
 
 =item status_message_fallback( $code )
 
-This function will return corresponding status message, if the code is
-defined.  Otherwise it will return a default message based on the
-code range.
+This function will return a default message based on the code class, for any
+unregistered status code.
 
-Use this function instead of C<status_message> if your code always
-assumes that there is a defined status message.
+    my $message = status_message($code);
+    unless ($message) {
+        $message = status_message_fallback($code);
+        croak "Status code not understood [$code], assuming ($message)";
+    }
+
+or
+
+    my $message = status_message($code) || status_message_fallback($code);
+
+Use this if your code always assumes that there is a defined status message.
 
 This function is not exported by default.
 
