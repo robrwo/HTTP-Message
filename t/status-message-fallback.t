@@ -7,7 +7,7 @@ plan tests => 12;
 use HTTP::Status qw(status_message status_message_fallback);
 
 foreach my $code (100, 200, 300, 400, 500) {
-    is(status_message_fallback($code), status_message($code));
+    is(status_message_fallback($code), undef);
 }
 
 is(status_message_fallback(0), undef);
