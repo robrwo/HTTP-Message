@@ -132,7 +132,7 @@ sub status_message  ($) { $StatusCode{$_[0]}; }
 sub status_message_fallback ($) {
     return if exists $StatusCode{ $_[0] };
     
-    return is_info(         $_[0] ) ? 'OK'
+    return is_info(         $_[0] ) ? 'Continue'
          : is_success(      $_[0] ) ? 'OK'
          : is_redirect(     $_[0] ) ? 'Redirect'
          : is_client_error( $_[0] ) ? 'Client Error'

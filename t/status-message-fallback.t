@@ -11,7 +11,7 @@ foreach my $code (100, 200, 300, 400, 500) {
 }
 
 is(status_message_fallback(0), undef);
-is(status_message_fallback(199), "OK");
+is(status_message_fallback(199), "Continue");
 is(status_message_fallback(299), "OK");
 is(status_message_fallback(399), "Redirect");
 is(status_message_fallback(499), "Client Error");
