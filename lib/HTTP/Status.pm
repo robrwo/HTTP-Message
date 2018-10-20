@@ -9,7 +9,7 @@ require 5.002;   # because we use prototypes
 
 use base 'Exporter';
 our @EXPORT = qw(is_info is_success is_redirect is_error status_message);
-our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default status_message_with_fallback);
+our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default status_message_fallback);
 
 # Note also addition of mnemonics to @EXPORT below
 
@@ -129,7 +129,7 @@ our %EXPORT_TAGS = (
 
 sub status_message  ($) { $StatusCode{$_[0]}; }
 
-sub status_message_with_fallback ($) {
+sub status_message_fallback ($) {
     status_message( $_[0] )
       || (
           is_info( $_[0] )         ? 'OK'
@@ -276,7 +276,7 @@ names above. If the $code is not registered in the L<list of IANA HTTP Status
 Codes|https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml>
 then C<undef> is returned.
 
-=item status_message_with_fallback( $code )
+=item status_message_fallback( $code )
 
 This function will return corresponding status message, if the code is
 defined.  Otherwise it will return a default message based on the
