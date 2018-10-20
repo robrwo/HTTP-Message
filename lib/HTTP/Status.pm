@@ -9,7 +9,7 @@ require 5.002;   # because we use prototypes
 
 use base 'Exporter';
 our @EXPORT = qw(is_info is_success is_redirect is_error status_message);
-our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default status_message_with_fallback);
+our @EXPORT_OK = qw(is_client_error is_server_error is_cacheable_by_default status_message_fallback);
 
 # Note also addition of mnemonics to @EXPORT below
 
@@ -129,16 +129,15 @@ our %EXPORT_TAGS = (
 
 sub status_message  ($) { $StatusCode{$_[0]}; }
 
-sub status_message_with_fallback ($) {
-    status_message( $_[0] )
-      || (
-          is_info( $_[0] )         ? 'OK'
-        : is_success( $_[0] )      ? 'OK'
-        : is_redirect( $_[0] )     ? 'Redirect'
-        : is_client_error( $_[0] ) ? 'Client Error'
-        : is_server_error( $_[0] ) ? 'Server Error'
-        :                            undef
-      );
+sub status_message_fallback ($) {
+    return if exists $StatusCode{ $_[0] };
+    
+    return is_info(         $_[0] ) ? 'Continue'
+         : is_success(      $_[0] ) ? 'OK'
+         : is_redirect(     $_[0] ) ? 'Redirect'
+         : is_client_error( $_[0] ) ? 'Client Error'
+         : is_server_error( $_[0] ) ? 'Server Error'
+         :                            undef
 }
 
 sub is_info                 ($) { $_[0] && $_[0] >= 100 && $_[0] < 200; }
@@ -276,14 +275,22 @@ names above. If the $code is not registered in the L<list of IANA HTTP Status
 Codes|https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml>
 then C<undef> is returned.
 
-=item status_message_with_fallback( $code )
+=item status_message_fallback( $code )
 
-This function will return corresponding status message, if the code is
-defined.  Otherwise it will return a default message based on the
-code range.
+This function will return a default message based on the code class, for any
+unregistered status code.
 
-Use this function instead of C<status_message> if your code always
-assumes that there is a defined status message.
+    my $message = status_message($code);
+    unless ($message) {
+        $message = status_message_fallback($code);
+        croak "Status code not understood [$code], assuming ($message)";
+    }
+
+or
+
+    my $message = status_message($code) || status_message_fallback($code);
+
+Use this if your code always assumes that there is a defined status message.
 
 This function is not exported by default.
 
